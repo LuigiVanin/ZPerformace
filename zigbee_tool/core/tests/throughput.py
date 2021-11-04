@@ -4,10 +4,12 @@ from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice, XBeeMessage
 from time import sleep, time
 
 
-def throughput_sender(local: ZigBeeDevice,
-                      remote: RemoteZigBeeDevice,
-                      rep_amount: Optional[int] = None,
-                      disable_messages: bool = False) -> None:
+def throughput_sender(
+    local: ZigBeeDevice,
+    remote: RemoteZigBeeDevice,
+    rep_amount: Optional[int] = None,
+    disable_messages: bool = False
+) -> None:
     if rep_amount is None:
         rep_amount = 100
     # TODO: remove sleep and give production status
