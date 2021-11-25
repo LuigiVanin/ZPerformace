@@ -4,5 +4,6 @@ scratch.py
 test.py
 test2.py 
 througput_client.py
+througput_receiver.py
 data/
 t2.py
