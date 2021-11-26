@@ -36,6 +36,7 @@ _pack_count = 0
 _rep_count = 0
 _data: List[Tuple] = []
 _delta_times: List[float] = []
+_time_total: float = 0
 
 
 def __receive_callback(message: XBeeMessage):
