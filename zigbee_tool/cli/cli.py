@@ -1,7 +1,7 @@
 from typer import Typer, Argument, echo, Option
 from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
-from ..core.tests.throughput import throughput_sender
+from ..core.tests.throughput import throughput_receiver, throughput_sender
 
 cli = Typer()
 
@@ -60,6 +60,20 @@ def throughputSender(
         remote = RemoteZigBeeDevice(local, node_id=dest)
         remote.read_device_info()
         throughput_sender(local, remote, rep)
+    finally:
+        if local is not None and local.is_open():
+            local.close()
+            
+
+@cli.command()
+def throughputReceiver(
+    port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
+    dest_file: str = Argument(..., help="caminho para o arquivo csv em que os resultados serão armazenados"),
+) -> None:
+    local = ZigBeeDevice(port, baud_rate=115200)
+    try:
+        local.open()
+        throughput_receiver(local, dest_file)
     finally:
         if local is not None and local.is_open():
             local.close()

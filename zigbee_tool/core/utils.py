@@ -9,6 +9,15 @@ def array_mean(array: List[number]) -> number:
     
     return sum/len(array)
 
+
+def array_sum(array: List[number]) -> number:
+    sum = 0
+    for i in array:
+        sum+=i
+        
+    return sum
+
+
 def print_results(
     results:List[Tuple[Any]],
     header:Optional[List[str]]=None,  

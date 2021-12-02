@@ -7,3 +7,5 @@ througput_client.py
 througput_receiver.py
 data/
 t2.py
+./receiver.py
+./sender.py

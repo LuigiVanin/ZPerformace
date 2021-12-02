@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 from digi.xbee import devices
 from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice, XBeeMessage
 from time import time
-from ..utils import array_mean, print_results
+from ..utils import array_mean, array_sum, print_results
 import csv
 
 
@@ -37,11 +37,12 @@ _rep_count = 0
 _data: List[Tuple] = []
 _delta_times: List[float] = []
 _time_total: float = 0
+_total_Bps = 0
 
 
 def __receive_callback(message: XBeeMessage):
     global _pack_count,_pack_amount, _rep_amount, _rep_count
-    global _data, _delta_times
+    global _data, _delta_times, _time_total, _total_Bps
     size: int = 100
     msg: str = message.data.decode()
     idx = msg.find("_")
@@ -56,14 +57,22 @@ def __receive_callback(message: XBeeMessage):
         if msg[:idx] == "begin":
             _pack_count = 0
             _delta_times = []
+            # TODO: find a way to remove _time_total and _total_bps
+            _time_total = 0
+            _total_Bps = 0
             print("começo do teste {}".format(_rep_count + 1))
             
         elif msg[:idx] == "end":
             _rep_count+=1
+            _time_total = array_sum(_delta_times)
+            _total_Bps = 86*_pack_count
             data = (
                 _pack_amount - _pack_count,
                 "{}%".format((_pack_amount - _pack_count) / _pack_amount),
                 array_mean(_delta_times),
+                _time_total,
+                _total_Bps,
+                _total_Bps/_time_total
             )
             _data.append(data)
             
@@ -86,14 +95,17 @@ def throughput_receiver(
     local:ZigBeeDevice, 
     file_dest:Optional[str]=None
 ):
-    global _pack_count, _rep_amount, _rep_count, _delta_times
+    global _pack_count, _rep_amount, _rep_count, _delta_times, _time_total
     local.add_data_received_callback(__receive_callback)
     input()
     
     header = [
         'Packet Loss',
         'Loss Percentage(%)',
-        'Time Delta Mean(ms)'
+        'Time Delta Mean(ms)',
+        'Total Time',
+        'Total Bytes',
+        'Throughput(Bps)'
     ]
     if file_dest is not None:
         try:
