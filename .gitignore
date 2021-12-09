@@ -5,7 +5,7 @@ test.py
 test2.py 
 througput_client.py
 througput_receiver.py
-data/
+data/data.csv
 t2.py
-./receiver.py
-./sender.py
+receiver.py
+sender.py

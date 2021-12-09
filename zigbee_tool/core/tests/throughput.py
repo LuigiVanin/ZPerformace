@@ -18,7 +18,7 @@ def throughput_sender(
         rep_amount = 100
         
     pack_amount = 100
-    payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&Fk"
+    payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&"
     local.send_data(remote, "START_{}".format(rep_amount))
 
     for i in range(rep_amount):
@@ -37,12 +37,12 @@ _rep_count = 0
 _data: List[Tuple] = []
 _delta_times: List[float] = []
 _time_total: float = 0
-_total_Bps = 0
+_total_bytes = 0
 
 
 def __receive_callback(message: XBeeMessage):
     global _pack_count,_pack_amount, _rep_amount, _rep_count
-    global _data, _delta_times, _time_total, _total_Bps
+    global _data, _delta_times, _time_total, _total_bytes
     size: int = 100
     msg: str = message.data.decode()
     idx = msg.find("_")
@@ -59,20 +59,20 @@ def __receive_callback(message: XBeeMessage):
             _delta_times = []
             # TODO: find a way to remove _time_total and _total_bps
             _time_total = 0
-            _total_Bps = 0
+            _total_bytes = 0
             print("começo do teste {}".format(_rep_count + 1))
             
         elif msg[:idx] == "end":
             _rep_count+=1
             _time_total = array_sum(_delta_times)
-            _total_Bps = 86*_pack_count
+            _total_bytes = (84*_pack_count)
             data = (
                 _pack_amount - _pack_count,
                 "{}%".format((_pack_amount - _pack_count) / _pack_amount),
                 array_mean(_delta_times),
                 _time_total,
-                _total_Bps,
-                _total_Bps/_time_total
+                _total_bytes,
+                ((_total_bytes*8)/1000)/_time_total
             )
             _data.append(data)
             
@@ -102,11 +102,13 @@ def throughput_receiver(
     header = [
         'Packet Loss',
         'Loss Percentage(%)',
-        'Time Delta Mean(ms)',
-        'Total Time',
-        'Total Bytes',
-        'Throughput(Bps)'
+        'Time Delta Mean(s)',
+        'Total Time(s)',
+        'Total Bytes(B)',
+        'Throughput(Kbps)'
     ]
+    
+    #TODO: mover trecho para utils
     if file_dest is not None:
         try:
             with open(file_dest, 'a', newline="") as f:

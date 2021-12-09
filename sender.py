@@ -7,13 +7,11 @@ PORT = "/dev/ttyUSB0"
 BAUD_RATE = 115200
 
 REMOTE_DEVICE = XBee64BitAddress.from_hex_string("0013A20041AECCD5")
-
 device =  ZigBeeDevice(PORT, BAUD_RATE)
 
 try:
     device.open()
     remote = RemoteZigBeeDevice(device, node_id="ROUTER_02")
-
     remote.read_device_info()
 
     print(device.get_node_id(), remote.get_node_id())
@@ -21,7 +19,7 @@ try:
     throughput_sender(
         local=device,
         remote=remote,
-        rep_amount=2
+        rep_amount=50
     )
 finally:
     if device is not None and device.is_open():
