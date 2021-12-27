@@ -18,7 +18,9 @@ def throughput_sender(
         rep_amount = 100
         
     pack_amount = 100
-    payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&"
+    # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&" # 84 bits
+    # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&f" # 85 bits
+    payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&f!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&fewd" # 168 bits 
     local.send_data(remote, "START_{}".format(rep_amount))
 
     for i in range(rep_amount):
