@@ -19,8 +19,9 @@ def throughput_sender(
         
     pack_amount = 100
     # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&" # 84 bits
-    # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&f" # 85 bits
-    payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&f!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&fewd" # 168 bits 
+    # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&ff" # 85 bits
+    payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&f!uftttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt" # 167 bits 
+    # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&f!uftttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt" # 255
     local.send_data(remote, "START_{}".format(rep_amount))
 
     for i in range(rep_amount):
@@ -40,10 +41,11 @@ _data: List[Tuple] = []
 _delta_times: List[float] = []
 _time_total: float = 0
 _total_bytes = 0
+_bit_value = 255
 
 
 def __receive_callback(message: XBeeMessage):
-    global _pack_count,_pack_amount, _rep_amount, _rep_count
+    global _pack_count,_pack_amount, _rep_amount, _rep_count, _bit_value
     global _data, _delta_times, _time_total, _total_bytes
     size: int = 100
     msg: str = message.data.decode()
@@ -67,7 +69,7 @@ def __receive_callback(message: XBeeMessage):
         elif msg[:idx] == "end":
             _rep_count+=1
             _time_total = array_sum(_delta_times)
-            _total_bytes = (84*_pack_count)
+            _total_bytes = (_bit_value*_pack_count)
             data = (
                 _pack_amount - _pack_count,
                 "{}%".format((_pack_amount - _pack_count) / _pack_amount),
