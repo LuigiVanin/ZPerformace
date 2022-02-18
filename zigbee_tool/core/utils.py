@@ -1,4 +1,6 @@
 from typing import Any, Optional, Union, List, Tuple
+from time import time
+from secrets import choice
 
 number = Union[int, float]
 
@@ -39,3 +41,13 @@ def print_results(
                 print(item, end=", ")
             else:
                 print(item, end=";\n")
+        
+               
+def packet_generator(length) -> str:
+    ascii_let: List[str] = [chr(i).lower() for i in range(65, 91)]
+    time_size = len(str(time()))
+    packet = ''
+    for _ in range(length-(time_size+1)):
+        packet = packet + choice(ascii_let)
+        
+    return packet
