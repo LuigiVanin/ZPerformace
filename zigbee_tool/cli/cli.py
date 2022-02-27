@@ -49,17 +49,20 @@ def sendData(
 def throughputSender(
     port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
     dest:str = Argument(..., help="nome do nó(node id) do destinatário"),
+    packet_size:int = Argument(..., help="Tamanho do pacote a ser enviado"),
     rep: int = Argument(..., help="número de repetições que ocorrerão")
 ) -> None:
     '''
     Executa um teste de throughput em que o pacote é composto por 100 mensagens de n bits
     '''
+    
+    print("Começando o processo de enviar pacotes para teste de throughput \n\n")
     local = ZigBeeDevice(port, baud_rate=115200)
     try:
         local.open()
         remote = RemoteZigBeeDevice(local, node_id=dest)
         remote.read_device_info()
-        throughput_sender(local, remote, rep)
+        throughput_sender(local, remote, rep, packet_size)
     finally:
         if local is not None and local.is_open():
             local.close()
@@ -70,6 +73,7 @@ def throughputReceiver(
     port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
     dest_file: str = Argument(..., help="caminho para o arquivo csv em que os resultados serão armazenados"),
 ) -> None:
+    print("Começando o processo de receber pacotes para o teste de throughput \n\n")
     local = ZigBeeDevice(port, baud_rate=115200)
     try:
         local.open()

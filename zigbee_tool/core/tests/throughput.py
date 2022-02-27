@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 from digi.xbee import devices
 from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice, XBeeMessage
 from time import time
-from ..utils import array_mean, array_sum, print_results
+from ..utils import array_mean, array_sum, print_results, packet_generator
 import csv
 
 
@@ -10,18 +10,15 @@ def throughput_sender(
     local: ZigBeeDevice,
     remote: RemoteZigBeeDevice,
     rep_amount: Optional[int] = None,
+    packet_size: int = 84,
     disable_messages: bool = False
 ) -> None:
-    print(remote.get_node_id())
     
     if rep_amount is None:
         rep_amount = 100
         
     pack_amount = 100
-    # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&" # 84 bits
-    # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&ff" # 85 bits
-    payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&f!uftttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt" # 167 bits 
-    # payload = "!ufW8hs<P=jxLR$55KrKVh5bvc>yxLR$55KrKVh5bvc>y<gRDiDsb%kg~}1$A}S5&f!uftttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt" # 255
+    payload = packet_generator(packet_size)
     local.send_data(remote, "START_{}".format(rep_amount))
 
     for i in range(rep_amount):
@@ -41,7 +38,7 @@ _data: List[Tuple] = []
 _delta_times: List[float] = []
 _time_total: float = 0
 _total_bytes = 0
-_bit_value = 255
+_bit_value = 0
 
 
 def __receive_callback(message: XBeeMessage):
@@ -52,6 +49,8 @@ def __receive_callback(message: XBeeMessage):
     idx = msg.find("_")
     
     if(idx == -1):
+        if _bit_value == 0:
+            _bit_value = len(msg)
         _pack_count += 1
         time_idx = msg.find("-")
         start_time = float(msg[time_idx+1: len(msg)])
