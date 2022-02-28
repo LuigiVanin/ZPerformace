@@ -2,6 +2,7 @@ from typer import Typer, Argument, echo, Option
 from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
+from ..core.plot import plot_throughput_data
 
 cli = Typer()
 
@@ -81,3 +82,10 @@ def throughputReceiver(
     finally:
         if local is not None and local.is_open():
             local.close()
+            
+    
+@cli.command()
+def plotThourghput(
+    src_file: str = Argument(..., help="caminho para o arquivo csv em que os dados serão retirados para a plotagem")
+):
+    plot_throughput_data(src_file)
