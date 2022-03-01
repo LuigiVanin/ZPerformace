@@ -25,7 +25,7 @@ def throughput_sender(
         
         local.send_data_async(remote, "begin_{}".format(i + 1))    
         for _ in range(pack_amount):
-            local.send_data(remote, "{}-{}".format(payload, time()))
+            local.send_data(remote, "{}-{:.7f}".format(payload, time()))
         local.send_data_async(remote, "end_")
         if not disable_messages : print("packet {} sended!".format(i+1)) 
     input()
