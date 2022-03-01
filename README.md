@@ -50,6 +50,6 @@ throughput_sender(
     )
 ```
 
-Para um exemplo prático de como utilizar ambas as funções `throughput_receiver` e `throughput_sender` paralalemente veja o README da pasta de samples. [LINK](samples/through_put_test)
+Para um exemplo prático de como utilizar ambas as funções `throughput_receiver` e `throughput_sender` paralalemente veja o README da pasta de samples e os arquivos python de demostração. [LINK](samples/through_put_test)
 
--   Via CLI:
+-   ### **Via CLI**:

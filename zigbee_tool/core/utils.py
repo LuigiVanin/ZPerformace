@@ -43,7 +43,7 @@ def print_results(
                 print(item, end=";\n")
         
                
-def packet_generator(length) -> str:
+def packet_generator(length: int) -> str:
     ascii_let: List[str] = [chr(i).lower() for i in range(65, 91)]
     time_size = len("{:.7f}".format(time()))
     packet = ''
