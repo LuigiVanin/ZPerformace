@@ -42,8 +42,7 @@ def print_results(
             else:
                 print(item, end=";\n")
         
-           
-# FIXME: correção, dispor de um valor fixo de números no float de tempo    
+               
 def packet_generator(length) -> str:
     ascii_let: List[str] = [chr(i).lower() for i in range(65, 91)]
     time_size = len("{:.7f}".format(time()))
