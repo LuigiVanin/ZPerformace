@@ -53,3 +53,35 @@ throughput_sender(
 Para um exemplo prático de como utilizar ambas as funções `throughput_receiver` e `throughput_sender` paralalemente veja o README da pasta de samples e os arquivos python de demostração. [LINK](samples/through_put_test)
 
 -   ### **Via CLI**:
+
+Para utilizar a CLI do projeto basta usar o terminal e chamar um arquivo python que possua a importação da ferramenta CLI, como no arquivo [main_cli](./main_cli.py)(inclusive o mesmo arquivo pode ser utilizado para se chamar as funções via linha de comando).
+
+Abaixo um exemplo de como utilizar a CLI:
+
+```bash
+> python main_cli.py senddata --help
+```
+
+_O comando acima checa os parãmetros do comando senddata que performa a tarefa de mandar uma mensagem assíncrona para um nó definido._
+
+Agora, como utilizar a cli para realizar um teste de throughput? Para isso é necessário utilizar os comandos `throughputreceiver` e `throughputsender`, esses comandos devem ser utilizados na respectiva ordem pelo mesmo motivo citado do método **via python**. Caso fique confuso sobre o funcionamento desses dois comandos é sempre possível utilizar a flag `--help` para conseguir mais informações sobre o comando e seus parâmetros.
+
+Abaixo um exemplo do teste de throughput via CLI, supondo que temos um dispositivo na porta _/dev/ttyUSB0_(receptor com ID de router4) e outro na _/dev/ttyUSB1_(entregador com ID de router2) de uma mesma máquina:
+
+-   Comando receptor:
+
+```bash
+# python main_cli.py throughputreceiver PORT DEST_FILE <-- comentário(ignore)
+
+> python main_cli.py throughputreceiver /dev/ttyUSB0 /data/data.csv
+```
+
+-   Comando entregador:
+
+```bash
+# python main_cli.py throughputreceiver PORT DEST PACKET_SIZE REP <-- comentário(ignore)
+
+> python main_cli.py throughputreceiver /dev/ttyUSB1 router4 84 10
+```
+
+Esses comandos acima resultariam em um teste com 10 repetições e de pacotes com 84 bits de tamanho que tem como aparelho receptor o _router4_ e como entregador o _router2_.
