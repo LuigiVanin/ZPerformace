@@ -111,7 +111,6 @@ def throughput_receiver(
         'Throughput(Kbps)'
     ]
     
-    #TODO: mover trecho para utils
     if file_dest is not None:
         try:
             with open(file_dest, 'a', newline="") as f:
@@ -122,5 +121,5 @@ def throughput_receiver(
         except FileNotFoundError:
             print("Erro: Problema ao encontrar o arquivo {}".format(file_dest))        
         
-    print(_pack_count, _rep_count)
+    if file_dest is not None : print("Resultados enviados para o arquivo: {}".format(file_dest))
     print_results(_data, header)

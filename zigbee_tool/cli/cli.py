@@ -37,7 +37,7 @@ def sendData(
         device.open()
         remote = RemoteZigBeeDevice(device, node_id=dest)
         remote.read_device_info()
-        echo(message="o dispositivo encontrado foi:\n- MAC: {}\n- Node ID: {}".format(hex_to_string(remote.get_pan_id()).replace(" ", ""),
+        echo(message="O dispositivo encontrado foi:\n- MAC: {}\n- Node ID: {}".format(hex_to_string(remote.get_pan_id()).replace(" ", ""),
                                                                                       remote.get_node_id()))
         device.send_data_async(remote,data=data)
         
@@ -49,12 +49,13 @@ def sendData(
 @cli.command()
 def throughputSender(
     port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
-    dest:str = Argument(..., help="nome do nó(node id) do destinatário"),
-    packet_size:int = Argument(..., help="Tamanho do pacote a ser enviado"),
-    rep: int = Argument(..., help="número de repetições que ocorrerão")
+    dest:str = Argument(..., help="Nome do nó(node id) do destinatário"),
+    packet_length:int = Argument(..., help="Tamanho do pacote a ser enviado"),
+    executions_number: int = Argument(..., help="Número de vezes que o teste é executado.")
 ) -> None:
     '''
-    Executa um teste de throughput em que o pacote é composto por 100 mensagens de n bits
+    Executa um teste de throughput com pacote definido. As repetições e tamanho das mensagens podem ser alterados.
+    Vale salientar que cada iteração do teste(execution_number) envia um total de 100 pacotes/mensagens, com esse valor sendo fixado.
     '''
     
     print("Começando o processo de enviar pacotes para teste de throughput \n\n")
@@ -63,7 +64,7 @@ def throughputSender(
         local.open()
         remote = RemoteZigBeeDevice(local, node_id=dest)
         remote.read_device_info()
-        throughput_sender(local, remote, rep, packet_size)
+        throughput_sender(local, remote, executions_number, packet_length)
     finally:
         if local is not None and local.is_open():
             local.close()
@@ -72,9 +73,13 @@ def throughputSender(
 @cli.command()
 def throughputReceiver(
     port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
-    dest_file: str = Argument(..., help="caminho para o arquivo csv em que os resultados serão armazenados"),
+    dest_file: str = Argument(..., help="Caminho para o arquivo csv em que os resultados serão armazenados"),
 ) -> None:
-    print("Começando o processo de receber pacotes para o teste de throughput \n\n")
+    '''
+    Prepara um dispositivo para ser o receptor de um teste de throughput. Assim que ocorrer o fim do teste os dados coletados podem ser armazenados.
+    O processo se encerra após a quantidade de execuções(execution_number) definido no dispositvo que envia os pacotes do teste(throughputsender).
+    '''
+    echo("Começando o processo de receber pacotes para o teste de throughput \n\n")
     local = ZigBeeDevice(port, baud_rate=115200)
     try:
         local.open()
@@ -85,7 +90,10 @@ def throughputReceiver(
             
     
 @cli.command()
-def plotThourghput(
+def plot_throughput(
     src_file: str = Argument(..., help="caminho para o arquivo csv em que os dados serão retirados para a plotagem")
 ):
+    '''
+    Desenha um gráfico de acordo com um arquivo CSV retirado de um teste de throughput.
+    '''
     plot_throughput_data(src_file)
