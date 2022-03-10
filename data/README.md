@@ -1,6 +1,6 @@
 # DADOS
 
-Os dados visualizados nessa pasta são refeerntes a teste reais realizados com dispositivos XBee ligados em uma mesma máquina localmente. Esses resultados são referentes a 100 repetições de um teste de throughput com um tamanho de pacotes de 84, 85, 168, 169 e 255 bits.
+Os dados visualizados nessa pasta são referentes a teste reais realizados com dispositivos XBee ligados em uma mesma máquina localmente, para gerar os dados foi utilizado a ferramenta deste repositório. Esses resultados são referentes a 100 repetições de um teste de throughput com um tamanho de pacotes de 84, 85, 168, 169 e 255 bits.
 
 | Tamanho de Pacote | Arquivo             |
 | ----------------- | ------------------- |

@@ -1,8 +1,8 @@
-from typer import Typer, Argument, echo, Option
+from typer import Typer, Argument, echo
 from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
-from ..core.plot import plot_throughput_data
+from ..core.plot import plot_throughput_data, plot_delay_data
 
 cli = Typer()
 
@@ -12,7 +12,7 @@ def broadcast(
     data: str = Argument(..., help="a mensagem é o texto a ser transmitido via boradcast")
 ) -> None:
     '''
-    comando que realiza uma mensagem por broadcast a partir do dispositivo a qual a posta foi declarada
+    comando que realiza uma mensagem por broadcast a partir do dispositivo a qual a porta foi declarada
     '''
     device = ZigBeeDevice(port, 115200)
     try:
@@ -30,7 +30,7 @@ def sendData(
     data: str = Argument(..., help="dados a serem enviados")
 ) -> None:
     '''
-    Manda uma mensagem direta ao dispositivo especificado
+    Manda uma mensagem direta ao dispositivo especificado por meio de um envio sincrono.
     '''
     device = ZigBeeDevice(port, 115200)
     try:
@@ -47,14 +47,14 @@ def sendData(
 
 
 @cli.command()
-def throughputSender(
+def performaceSender(
     port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
     dest:str = Argument(..., help="Nome do nó(node id) do destinatário"),
     packet_length:int = Argument(..., help="Tamanho do pacote a ser enviado"),
     executions_number: int = Argument(..., help="Número de vezes que o teste é executado.")
 ) -> None:
     '''
-    Executa um teste de throughput com pacote definido. As repetições e tamanho das mensagens podem ser alterados.
+    Executa a parte de envio de dados de um teste de performace(throughput, delay e perca de pacotes). As repetições e tamanho das mensagens podem ser alterados.
     Vale salientar que cada iteração do teste(execution_number) envia um total de 100 pacotes/mensagens, com esse valor sendo fixado.
     '''
     
@@ -71,15 +71,15 @@ def throughputSender(
             
 
 @cli.command()
-def throughputReceiver(
+def performaceReceiver(
     port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
     dest_file: str = Argument(..., help="Caminho para o arquivo csv em que os resultados serão armazenados"),
 ) -> None:
     '''
-    Prepara um dispositivo para ser o receptor de um teste de throughput. Assim que ocorrer o fim do teste os dados coletados podem ser armazenados.
+    Prepara um dispositivo para ser o receptor de um teste de performace(throughput, delay e perca de pacotes). Assim que ocorrer o fim do teste os dados coletados podem ser armazenados.
     O processo se encerra após a quantidade de execuções(execution_number) definido no dispositvo que envia os pacotes do teste(throughputsender).
     '''
-    echo("Começando o processo de receber pacotes para o teste de throughput \n\n")
+    echo(message="Começando o processo de receber pacotes para o teste de throughput \n\n")
     local = ZigBeeDevice(port, baud_rate=115200)
     try:
         local.open()
@@ -91,9 +91,19 @@ def throughputReceiver(
     
 @cli.command()
 def plot_throughput(
-    src_file: str = Argument(..., help="caminho para o arquivo csv em que os dados serão retirados para a plotagem")
+    src_file: str = Argument(..., help="caminho para o arquivo csv em que os dados serão retirados para a plotagem"),
+    graph_type: str = Argument(..., help="O tipo de gráfico a ser plotado, podendo assumir o valor de 'histogram' ou 'violin")
 ):
     '''
-    Desenha um gráfico de acordo com um arquivo CSV retirado de um teste de throughput.
+    Desenha um gráfico violino ou histogarama do throughput de acordo com um arquivo CSV retirado de um teste de performace feito pela ferramenta.
     '''
-    plot_throughput_data(src_file)
+    plot_throughput_data(src_file, graph_type)
+    
+@cli.command()
+def plot_delay(
+    src_file: str = Argument(..., help="caminho para o arquivo csv em que os dados serão retirados para a plotagem"),
+):
+    '''
+    Desenha um gráfico de linha do delay de acordo com um arquivo CSV retirado de um teste de performace feito pela ferramenta.
+    '''
+    plot_delay_data(src_file)
