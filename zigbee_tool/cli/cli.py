@@ -2,7 +2,7 @@ from typer import Typer, Argument, echo
 from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
-from ..core.plot import plot_throughput_data, plot_delay_data
+from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data
 
 cli = Typer()
 
@@ -90,9 +90,9 @@ def performaceReceiver(
             
     
 @cli.command()
-def plot_throughput(
+def plotThroughput(
     src_file: str = Argument(..., help="caminho para o arquivo csv em que os dados serão retirados para a plotagem"),
-    graph_type: str = Argument(..., help="O tipo de gráfico a ser plotado, podendo assumir o valor de 'histogram' ou 'violin")
+    graph_type: str = Argument(..., help="O tipo de gráfico a ser plotado, podendo assumir o valor de 'histogram', 'violin ou line")
 ):
     '''
     Desenha um gráfico violino ou histogarama do throughput de acordo com um arquivo CSV retirado de um teste de performace feito pela ferramenta.
@@ -100,10 +100,22 @@ def plot_throughput(
     plot_throughput_data(src_file, graph_type)
     
 @cli.command()
-def plot_delay(
+def plotDelay(
     src_file: str = Argument(..., help="caminho para o arquivo csv em que os dados serão retirados para a plotagem"),
+    graph_type: str = Argument(..., help="O tipo de gráfico a ser plotado, podendo assumir o valor de 'histogram', 'violin ou line"),
 ):
     '''
     Desenha um gráfico de linha do delay de acordo com um arquivo CSV retirado de um teste de performace feito pela ferramenta.
     '''
-    plot_delay_data(src_file)
+    plot_delay_data(src_file, graph_type)
+    
+
+@cli.command()
+def plotPacketLoss(
+    src_file: str = Argument(..., help="caminho para o arquivo csv em que os dados serão retirados para a plotagem"),
+    graph_type: str = Argument(..., help="O tipo de gráfico a ser plotado, podendo assumir o valor de 'histogram', 'violin ou line"),
+):
+    '''
+    Desenha um gráfico de linha do delay de acordo com um arquivo CSV retirado de um teste de performace feito pela ferramenta.
+    '''
+    plot_packet_loss_data(src_file, graph_type)
