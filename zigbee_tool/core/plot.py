@@ -29,6 +29,7 @@ def plot_throughput_data(dest_file: str, style: str="hist"):
         print("Invalid graph style")
         return
         
+    plt.ylim((0, 20))
     mean = data.mean()
     std = data.std()
     textstr = '\n'.join((
