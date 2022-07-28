@@ -13,17 +13,17 @@ def plot_throughput_data(dest_file: str, style: str="hist"):
     if style == "hist" or style == "histogram":
         ax.hist(data, bins=5)
         plt.title("Histograma da incidência do throughput(Kpbs) das iterações")
-        plt.xlabel('ThroughPut(Kpbs)') 
+        plt.xlabel('ThroughPut(Kbps)') 
         plt.ylabel('Incidência de Valores')
     elif style == "violin":
         ax.violinplot(data)
         plt.title("Gráfico Violino da incidência do throughput(Kpbs) das iterações")
         plt.ylabel('Incidência de Valores')
-        plt.ylabel('ThroughPut(Kpbs)') 
+        plt.ylabel('ThroughPut(Kbps)') 
     elif style == "line":
         ax.plot(data)
         plt.title("Histograma da incidência do throughput(Kpbs) das iterações")
-        plt.ylabel('ThroughPut(Kpbs)') 
+        plt.ylabel('ThroughPut(Kbps)') 
         plt.xlabel('Número da iteração')
     else:
         print("Invalid graph style")

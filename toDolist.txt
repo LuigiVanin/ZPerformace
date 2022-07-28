@@ -1,0 +1,1 @@
+#fragmentar a imagem em 84 bytes ou em 255

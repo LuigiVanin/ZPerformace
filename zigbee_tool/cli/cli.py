@@ -3,6 +3,7 @@ from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
 from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data
+from typing import Optional
 
 cli = Typer()
 
@@ -25,7 +26,7 @@ def broadcast(
             
 @cli.command()
 def sendData(
-    port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
+    port: str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
     dest: str = Argument(..., help="nome do nó(node id) do destinatário"),
     data: str = Argument(..., help="dados a serem enviados")
 ) -> None:
@@ -47,10 +48,31 @@ def sendData(
 
 
 @cli.command()
+def receiveData(
+	port: str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido")	
+) -> None:
+	'''
+	Recebe uma mensagem diretamente do dispositivo especificado por meio de um envio sincrono.
+	'''
+	device = ZigBeeDevice(port, 115200)
+	try:
+		device.open()
+		device_message = None
+		while device_message == None:
+			device_message = device.read_data()
+		print(device_message.data.decode())
+        
+	finally:
+		if device is not None and device.is_open():
+			device.close()
+
+
+@cli.command()
 def performaceSender(
-    port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
-    dest:str = Argument(..., help="Nome do nó(node id) do destinatário"),
-    packet_length:int = Argument(..., help="Tamanho do pacote a ser enviado"),
+    port: str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
+    dest: str = Argument(..., help="Nome do nó(node id) do destinatário"),
+    packet_length: str = Argument(..., help="Tamanho do(s) pacote(s) a ser(em) enviado(s)"),
+    pack_amount: int = Argument(..., help="Quantidade de pacotes a serem enviados"),
     executions_number: int = Argument(..., help="Número de vezes que o teste é executado.")
 ) -> None:
     '''
@@ -64,7 +86,7 @@ def performaceSender(
         local.open()
         remote = RemoteZigBeeDevice(local, node_id=dest)
         remote.read_device_info()
-        throughput_sender(local, remote, executions_number, packet_length)
+        throughput_sender(local, remote, packet_length, pack_amount, executions_number)
     finally:
         if local is not None and local.is_open():
             local.close()
@@ -72,8 +94,8 @@ def performaceSender(
 
 @cli.command()
 def performaceReceiver(
-    port:str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
-    dest_file: str = Argument(..., help="Caminho para o arquivo csv em que os resultados serão armazenados"),
+    port: str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
+    dest_file: Optional[str] = "./data/data.csv" #Argument(..., help="Caminho para o arquivo csv em que os resultados serão armazenados")
 ) -> None:
     '''
     Prepara um dispositivo para ser o receptor de um teste de performace(throughput, delay e perca de pacotes). Assim que ocorrer o fim do teste os dados coletados podem ser armazenados.
