@@ -93,7 +93,7 @@ ou
 Esses comandos acima resultariam em um teste com pacotes com 84 bytes de tamanho, com 100 testes e com 3 repetições, que tem como aparelho receptor o _router4_ e como entregador o _router2_.
 
 -   ### **Envio e recebimento de dados**:
-Também é possível enviar e receber dados utilizando esta ferramenta. para enviar dados é necessário a porta, o nó de destino e o dado a ser enviado. Já para receber é nescessário apenas a porta do dispositivo.
+Também é possível enviar e receber dados utilizando esta ferramenta. Para enviar dados é necessário a porta, o nó de destino e o dado a ser enviado. Já para receber é nescessário apenas a porta do dispositivo.
 Para enviar dados é similar ao recurso anterior:
 
 ```bash
