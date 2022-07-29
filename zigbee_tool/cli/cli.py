@@ -5,6 +5,13 @@ from ..core.tests.throughput import throughput_receiver, throughput_sender
 from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data
 from typing import Optional
 
+import os
+import io
+import PIL.Image as Image
+import sys
+
+from array import array
+
 cli = Typer()
 
 @cli.command()
@@ -30,21 +37,39 @@ def sendData(
     dest: str = Argument(..., help="nome do nó(node id) do destinatário"),
     data: str = Argument(..., help="dados a serem enviados")
 ) -> None:
-    '''
-    Manda uma mensagem direta ao dispositivo especificado por meio de um envio sincrono.
-    '''
-    device = ZigBeeDevice(port, 115200)
-    try:
-        device.open()
-        remote = RemoteZigBeeDevice(device, node_id=dest)
-        remote.read_device_info()
-        echo(message="O dispositivo encontrado foi:\n- MAC: {}\n- Node ID: {}".format(hex_to_string(remote.get_pan_id()).replace(" ", ""),
-                                                                                      remote.get_node_id()))
-        device.send_data_async(remote,data=data)
-        
-    finally:
-        if device is not None and device.is_open():
-            device.close()
+	'''
+	Manda uma mensagem direta ao dispositivo especificado por meio de um envio sincrono.
+	'''
+	device = ZigBeeDevice(port, 115200)
+	try:
+		device.open()
+		remote = RemoteZigBeeDevice(device, node_id=dest)
+		remote.read_device_info()
+		
+		echo(message="O dispositivo encontrado foi:\n- MAC: {}\n- Node ID: {}".format(hex_to_string(remote.get_pan_id()).replace(" ", ""),
+		remote.get_node_id()))
+		
+		if data.find(".png") != -1 or data.find(".jpeg") != -1:
+			#print("oi")
+			device.send_data(remote, "image")
+			with open(data, "rb") as image:
+				b = bytearray(image.read())
+			pacote = ""
+			predictedPacket = ""
+			for i in b:
+				predictedPacket = pacote + str(i) + "/"
+				if sys.getsizeof(predictedPacket) > 84:
+					device.send_data(remote, pacote)
+					#print(pacote)
+					pacote = ""
+				pacote += str(i) + "/"
+			device.send_data(remote,data=pacote)
+		else:
+			device.send_data_async(remote,data=data)
+		device.send_data_async(remote, "fim!!!")
+	finally:
+		if device is not None and device.is_open():
+			device.close()
 
 
 @cli.command()
@@ -60,7 +85,44 @@ def receiveData(
 		device_message = None
 		while device_message == None:
 			device_message = device.read_data()
-		print(device_message.data.decode())
+		#print(device_message.data.decode())
+
+		if device_message.data.decode() == "image":
+			imageOutput = "imageFrag/imageOutput.png"
+			pacote = ""
+			fim = False
+			array = []
+			fin = bytearray(b'fim!!!')
+			while not fim:
+				device_message = device.read_data()
+				if device_message != None:
+					if device_message.data != fin:
+						array.append(device_message)
+						#pacote += device_message.data.decode()
+					else:
+						fim = True
+						#print(device_message.data == bytearray(b'fim!!!'))
+			
+			for i in array:
+				pacote += i.data.decode()
+			#print("oi")
+			splittedPacket = pacote.split("/")
+			splittedPacket.pop(len(splittedPacket)-1)
+			
+			arrayImage = []
+			
+			for point in splittedPacket:
+				arrayImage.append(int(point))
+			
+			bytearrayImage = bytearray(arrayImage)
+			#print(bytearrayImage)
+			image = Image.open(io.BytesIO(bytearrayImage))
+			image.save(imageOutput)
+		else:
+			while device_message == None:
+				device_message = device.read_data()
+			print(device_message.data.decode())
+			#print("error")
         
 	finally:
 		if device is not None and device.is_open():

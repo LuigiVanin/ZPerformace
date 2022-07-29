@@ -14,7 +14,7 @@ OBS.: Caso tenha problemas em instalar a biblioteca digi-xbee que consta no arqu
 
 ## Como utilizar a ferramenta?
 
-no momento a ferramenta dispões de um recurso para medir a valor de throughput entre dois dispoistivos XBee utilizando o protocolo ZigBee. Para realizar o teste citado existem dois métodos, se pode utilizar a linha de comando da ferramenta ou importar em arquivo python as funções necessárias para a realização do teste de throughput.
+No momento a ferramenta dispões de dois recursos um para medir a valor de throughput entre dois dispoistivos XBee e outro para enviar dados, que podem ser strings de até 256 caracteres ou imagens (ainda em implementação), entre dois dispositivos ambos os recursos utilizam o protocolo ZigBee. Para realizar o teste de throughput citado anteriormente existem dois métodos, se pode utilizar a linha de comando da ferramenta ou importar em arquivo python as funções necessárias para a realização do teste de throughput.
 
 Vale salientar que para realizar o teste de throughput é necessário dois aparelhos, um receptor e outro entregador, ou seja, para que o teste seja realizado se deve ter dois comandos ocorrendo paralelamente, um para enviar dados e outro para receber.
 
@@ -31,7 +31,7 @@ from zigbee_tool.core.tests.throughput import throughput_receiver
 # utilização da função
 throughput_receiver(
     device_receiver=local_device,
-    file_dets=file_dest # arquivo CSV destino dos dados extraídos do teste
+    file_dets=file_dest # arquivo CSV destino dos dados extraídos do teste (opcional)
 )
 ```
 
@@ -45,8 +45,10 @@ from zigbee_tool.core.tests.throughput import throughput_sender
 throughput_sender(
         local=local_device,
         remote=remote_device,
+        packet_size=size_Bytes,
+        pack_amount=amount_packet,
         rep_amount=repetition_number
-        packet_size=size_bits
+        
     )
 ```
 
@@ -71,7 +73,11 @@ Abaixo um exemplo do teste de throughput via CLI, supondo que temos um dispositi
 -   Comando receptor:
 
 ```bash
-# python main_cli.py peformacereceiver PORT DEST_FILE <-- comentário(ignore)
+# python main_cli.py peformacereceiver PORT DEST_FILE(opcional) <-- comentário(ignore)
+
+> python main_cli.py peformacereceiver /dev/ttyUSB0
+
+ou
 
 > python main_cli.py peformacereceiver /dev/ttyUSB0 /data/data.csv
 ```
@@ -79,9 +85,35 @@ Abaixo um exemplo do teste de throughput via CLI, supondo que temos um dispositi
 -   Comando entregador:
 
 ```bash
-# python main_cli.py performacesender PORT DEST PACKET_SIZE REP <-- comentário(ignore)
+# python main_cli.py performacesender PORT DEST PACKET_SIZE PACKET_AMOUNT REPETITIONS <-- comentário(ignore)
 
-> python main_cli.py performacesender /dev/ttyUSB1 router4 84 10
+> python main_cli.py performacesender /dev/ttyUSB1 router4 84 100 3
 ```
 
-Esses comandos acima resultariam em um teste com 10 repetições e de pacotes com 84 bits de tamanho que tem como aparelho receptor o _router4_ e como entregador o _router2_.
+Esses comandos acima resultariam em um teste com pacotes com 84 bytes de tamanho, com 100 testes e com 3 repetições, que tem como aparelho receptor o _router4_ e como entregador o _router2_.
+
+-   ### **Envio e recebimento de dados**:
+Também é possível enviar e receber dados utilizando esta ferramenta. para enviar dados é necessário a porta, o nó de destino e o dado a ser enviado. Já para receber é nescessário apenas a porta do dispositivo.
+Para enviar dados é similar ao recurso anterior:
+
+```bash
+# python main_cli.py senddata PORT DEST String <-- comentário(ignore)
+
+> python main_cli.py senddata /dev/ttyUSB0 route04 teste123
+
+ou
+
+# python main_cli.py senddata PORT DEST IMAGE_FILE <-- comentário(ignore)
+
+> python main_cli.py senddata /dev/ttyUSB0 route04 imageFrag/image.png
+
+```
+
+Para receber dados:
+
+```bash
+# python main_cli.py receivedata PORT <-- comentário(ignore)
+
+> python main_cli.py receivedata /dev/ttyUSB1
+```
+Esses comandos acima resultariam em um envio de dados que tem como aparelho receptor o _router4_ e como entregador o _router2_.
