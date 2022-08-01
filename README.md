@@ -1,6 +1,6 @@
 # ZigBee Test Tool
 
-O projeto consiste em umaferramenta para auxiliar na realização de testes de performaces com dispositivos digi XBee que utilizam o protocolo de comunicação ZigBee
+O projeto consiste em uma ferramenta para auxiliar na realização de testes de performaces com dispositivos digi XBee que utilizam o protocolo de comunicação ZigBee
 
 Para utilizar as ferramentas do projeto basta baixar o repositório com `git clone` ou pelo próprio download do github, e instalar as dependências necessárias com o comando:
 
@@ -117,3 +117,18 @@ Para receber dados:
 > python main_cli.py receivedata /dev/ttyUSB1
 ```
 Esses comandos acima resultariam em um envio de dados que tem como aparelho receptor o _router4_ e como entregador o _router2_.
+
+-   ### **Verificar dispositivos conectados fisicamente**:
+É possível detectar dispositivos conectados fisicamente através do comando `checkdevices`, porém funciona apenas no Linux!
+Seram apresentados os dados de porta, nó e endereço MAC.
+
+```bash
+> python main_cli.py checkdevices
+
+Possível saida:
+Foram encontrados 2 dispositos:
+PORT - NODE - MAC
+(1)/dev/ttyUSB1 - router04 - 0000000000001234
+(2)/dev/ttyUSB0 - router02 - 0000000000001234
+```
+

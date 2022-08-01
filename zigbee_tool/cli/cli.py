@@ -3,6 +3,7 @@ from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
 from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data
+from ..core.features import checkAllDevices
 from typing import Optional
 
 import os
@@ -15,12 +16,21 @@ from array import array
 cli = Typer()
 
 @cli.command()
+def checkDevices(
+) -> None:
+	'''
+	Verifica se existe algum dispositivo conectado e retorna sua porta e nó
+	'''
+	checkAllDevices()
+
+
+@cli.command()
 def broadcast(
     port: str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
     data: str = Argument(..., help="a mensagem é o texto a ser transmitido via boradcast")
 ) -> None:
     '''
-    comando que realiza uma mensagem por broadcast a partir do dispositivo a qual a porta foi declarada
+    Comando que realiza uma mensagem por broadcast a partir do dispositivo a qual a porta foi declarada
     '''
     device = ZigBeeDevice(port, 115200)
     try:
