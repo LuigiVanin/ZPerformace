@@ -120,7 +120,7 @@ Esses comandos acima resultariam em um envio de dados que tem como aparelho rece
 
 -   ### **Verificar dispositivos conectados fisicamente**:
 É possível detectar dispositivos conectados fisicamente através do comando `checkdevices`, porém funciona apenas no Linux!
-Seram apresentados os dados de porta, nó e endereço MAC de cada dispositivo encontrado.
+Serão apresentados os dados de porta, nó e endereço MAC de cada dispositivo encontrado.
 
 ```bash
 > python main_cli.py checkdevices
