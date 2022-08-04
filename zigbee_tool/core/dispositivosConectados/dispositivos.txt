@@ -1,0 +1,2 @@
+/dev/ttyUSB1 - router02 - 0000000000001234
+/dev/ttyUSB0 - router04 - 0000000000001234

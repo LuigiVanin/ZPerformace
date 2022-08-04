@@ -32,3 +32,47 @@ def checkAllDevices():
 			print("({}){}".format(cont, i))
 			cont += 1
 		
+		destination_file = "./zigbee_tool/core/dispositivosConectados/dispositivos.txt"
+		f = open(destination_file, "w", newline="\n")
+		with f as myDevices:
+			for i in dispositivos:
+				myDevices.write(i)
+				myDevices.write("\n")
+		f.close()
+	else:
+		print("Nenhum dispositivo conectado")
+
+def returnDevice(choice, info):
+	destination_file = "./zigbee_tool/core/dispositivosConectados/dispositivos.txt"
+	cont = 1
+	dados = []
+	dispositivos = []
+	miniString = ""
+	try:
+		choice = int(choice)
+		info = int(info)
+	
+		f = open(destination_file, "r")
+		frase = f.read()
+		for i in frase:
+			if i != "\n" and i != '-' and i != ' ':
+				miniString += i
+			else:
+				if len(miniString) > 0:
+					dados.append(miniString)
+					miniString = ""
+				if i == "\n":
+					dispositivos.append(dados)
+					dados = []
+		return dispositivos[choice-1][info]		
+		
+	except:
+		return -1
+
+
+
+
+
+
+
+

@@ -3,7 +3,7 @@ from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
 from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data
-from ..core.features import checkAllDevices
+from ..core.features import checkAllDevices, returnDevice
 from typing import Optional
 
 import os
@@ -22,7 +22,7 @@ def checkDevices(
 	Verifica se existe algum dispositivo conectado e retorna sua porta e nó
 	'''
 	checkAllDevices()
-
+	#print(returnDevice("dev", 1))
 
 @cli.command()
 def broadcast(
@@ -32,6 +32,10 @@ def broadcast(
     '''
     Comando que realiza uma mensagem por broadcast a partir do dispositivo a qual a porta foi declarada
     '''
+    
+    if returnDevice(port, 0) != -1:
+    	port = returnDevice(port, 0)
+    
     device = ZigBeeDevice(port, 115200)
     try:
         device.open()
@@ -50,6 +54,12 @@ def sendData(
 	'''
 	Manda uma mensagem direta ao dispositivo especificado por meio de um envio sincrono.
 	'''
+	if port.find("/dev/") == -1 and returnDevice(port, 0) != -1:
+		port = returnDevice(port, 0)
+	
+	if dest.find("rou") == -1 and returnDevice(dest, 1) != -1:
+		dest = returnDevice(dest, 1)
+
 	device = ZigBeeDevice(port, 115200)
 	try:
 		device.open()
@@ -89,6 +99,10 @@ def receiveData(
 	'''
 	Recebe uma mensagem diretamente do dispositivo especificado por meio de um envio sincrono.
 	'''
+	
+	if port.find("/dev/") == -1 and returnDevice(port, 0) != -1:
+		port = returnDevice(port, 0)
+
 	device = ZigBeeDevice(port, 115200)
 	try:
 		device.open()
@@ -152,6 +166,12 @@ def performaceSender(
     Vale salientar que cada iteração do teste(execution_number) envia um total de 100 pacotes/mensagens, com esse valor sendo fixado.
     '''
     
+    if port.find("/dev/") == -1 and returnDevice(port, 0) != -1:
+    	port = returnDevice(port, 0)
+    
+    if dest.find("rou") == -1 and returnDevice(dest, 1) != -1:
+    	dest = returnDevice(dest, 1)
+    
     print("Começando o processo de enviar pacotes para teste de throughput \n\n")
     local = ZigBeeDevice(port, baud_rate=115200)
     try:
@@ -173,6 +193,10 @@ def performaceReceiver(
     Prepara um dispositivo para ser o receptor de um teste de performace(throughput, delay e perca de pacotes). Assim que ocorrer o fim do teste os dados coletados podem ser armazenados.
     O processo se encerra após a quantidade de execuções(execution_number) definido no dispositvo que envia os pacotes do teste(throughputsender).
     '''
+    
+    if port.find("/dev/") == -1 and returnDevice(port, 0) != -1:
+        port = returnDevice(port, 0)
+    
     echo(message="Começando o processo de receber pacotes para o teste de throughput \n\n")
     local = ZigBeeDevice(port, baud_rate=115200)
     try:
