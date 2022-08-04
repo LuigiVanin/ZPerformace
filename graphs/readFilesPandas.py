@@ -4,14 +4,15 @@ import glob
 
 df_list = []
 
-path = "data/"
-fileOut = "graphs/medias.csv"
+path = "../data/"
+fileOut = "medias.csv"
 
 csv_files = glob.glob(path + "/*.csv")
 
-dic = {"Tamanho de pacote" : [], "Média de Packet Loss" : [], "Média de Loss Percentage(%)" : [], 
-"Média de Packet Loss" : [], "Média de Loss Percentage(%)" : [], "Média do Time Delta Mean(s)" : [],
-"Média do Total Time(s)" : [], "Média de Total Bytes(B)" : [], "Média do Throughput(Kbps)" : []}
+#dic = {"Tamanho do pacote" : [], "Média de Packet Loss" : [], "Média de Loss Percentage(%)" : [], 
+#"Média de Packet Loss" : [], "Média de Loss Percentage(%)" : [], "Média do Time Delta Mean(s)" : [],
+#"Média do Total Time(s)" : [], "Média de Total Bytes(B)" : [], "Média do Throughput(Kbps)" : []}
+
 newF = pd.DataFrame()
 
 #cont = 0
@@ -19,17 +20,17 @@ newF = pd.DataFrame()
 for file in csv_files:
 	f = pd.read_csv(file)
 	df2 = pd.DataFrame({
-	"Tamanho de pacote" : [int(f["Tamanho de pacote"].mean())],
+	"Tamanho do pacote" : [int(f["Tamanho de pacote"].mean())],
 	"Média de Packet Loss" : [int(f["Packet Loss"].mean())],
 	"Média de Loss Percentage(%)" : "0%",		#[f["Packet Loss"].mean()],
 	"Média do Time Delta Mean(s)" : [f["Time Delta Mean(s)"].mean()],
 	"Média do Total Time(s)" : [f["Total Time(s)"].mean()],
-	"Média de Total Bytes(B)" : [f["Total Bytes(B)"].mean()],
-	"Média do Throughput(Kbps)" : [f["Throughput(Kbps)"].mean()],
+	"Média de Total Bytes(B)" : [int(f["Total Bytes(B)"].mean())],
+	"Média do Throughput(Kbps)" : [f["Throughput(Kbps)"].mean()]
 	})
 	newF = newF.append(df2)
 
-newF = newF.sort_values(by = ["Tamanho de pacote"])
+newF = newF.sort_values(by = ["Tamanho do pacote"])
 
 newF.to_csv(fileOut, index=False)	
 	
