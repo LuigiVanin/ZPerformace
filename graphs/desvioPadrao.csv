@@ -1,4 +1,4 @@
-Tamanho de pacote,Desvio Padrão de Packet Loss,Desvio Padrão de Loss Percentage(%),Desvio Padrão do Time Delta Mean(s),Desvio Padrão do Total Time(s),Desvio Padrão de Total Bytes(B),Desvio Padrão do Throughput(Kbps)
+Tamanho do pacote,Desvio Padrão de Packet Loss,Desvio Padrão de Loss Percentage(%),Desvio Padrão do Time Delta Mean(s),Desvio Padrão do Total Time(s),Desvio Padrão de Total Bytes(B),Desvio Padrão do Throughput(Kbps)
 19,0,0%,0.0010966105640383616,0.10966105640383601,0,0.2150437431648403
 20,0,0%,0.0005987343203857841,0.059873432038577236,0,0.15151078768228035
 21,0,0%,0.001250215466042532,0.1250215466042534,0,0.4221771317252616

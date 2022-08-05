@@ -2,7 +2,7 @@ from typer import Typer, Argument, echo
 from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
-from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data
+from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data, generateData
 from ..core.features import checkAllDevices, returnDevice
 from typing import Optional
 
@@ -182,7 +182,7 @@ def performaceSender(
     finally:
         if local is not None and local.is_open():
             local.close()
-            
+
 
 @cli.command()
 def performaceReceiver(
@@ -237,3 +237,16 @@ def plotPacketLoss(
     Desenha um gráfico de linha do delay de acordo com um arquivo CSV retirado de um teste de performace feito pela ferramenta.
     '''
     plot_packet_loss_data(src_file, graph_type)
+
+
+@cli.command()
+def dataGenerator(
+	src_file: Optional[str] = "./data/",
+	dest_file: Optional[str] = "./graphs/",
+) -> None:
+	'''
+	Gera os dados de média e desvio padrão de uma determinada pasta de arquivos csv e salva em outra pasta.
+	'''
+	generateData(src_file, dest_file)
+
+

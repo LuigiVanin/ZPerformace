@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import glob
 
 def plot_throughput_data(dest_file: str, style: str="hist"):
     props = {
@@ -106,4 +107,90 @@ def plot_packet_loss_data(dest_file: str, style: str="line"):
             verticalalignment='top', bbox=props)
     plt.grid()
     plt.show()
+
+
+def generateData(src_file: str, dest_file: str):
+	fileOutDP = "desvioPadrao.csv"
+	fileOutM = "media.csv"
+	csv_files = glob.glob(src_file + "/*.csv")
+	#print(csv_files)
+	mf = pd.DataFrame()
+	dpf = pd.DataFrame()
+
+	for file in csv_files:
+		f = pd.read_csv(file)
+		dppd = pd.DataFrame({
+		"Tamanho do pacote" : [int(f["Tamanho de pacote"].mean())],
+		"Desvio Padrão de Packet Loss" : [int(f["Packet Loss"].std())],
+		"Desvio Padrão de Loss Percentage(%)" : "0%",		#[f["Packet Loss"].mean()],
+		"Desvio Padrão do Time Delta Mean(s)" : [f["Time Delta Mean(s)"].std()],
+		"Desvio Padrão do Total Time(s)" : [f["Total Time(s)"].std()],
+		"Desvio Padrão de Total Bytes(B)" : [int(f["Total Bytes(B)"].std())],
+		"Desvio Padrão do Throughput(Kbps)" : [f["Throughput(Kbps)"].std()],
+		})
+		mpd = pd.DataFrame({
+		"Tamanho do pacote" : [int(f["Tamanho de pacote"].mean())],
+		"Média de Packet Loss" : [int(f["Packet Loss"].mean())],
+		"Média de Loss Percentage(%)" : "0%",		#[f["Packet Loss"].mean()],
+		"Média do Time Delta Mean(s)" : [f["Time Delta Mean(s)"].mean()],
+		"Média do Total Time(s)" : [f["Total Time(s)"].mean()],
+		"Média de Total Bytes(B)" : [int(f["Total Bytes(B)"].mean())],
+		"Média do Throughput(Kbps)" : [f["Throughput(Kbps)"].mean()]
+		})
+		mf = mf.append(mpd)
+		dpf = dpf.append(dppd)
+
+	mf = mf.sort_values(by = ["Tamanho do pacote"])
+	dpf = dpf.sort_values(by = ["Tamanho do pacote"])
+
+	mf.to_csv(dest_file+fileOutM, index=False)
+	dpf.to_csv(dest_file+fileOutDP, index=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

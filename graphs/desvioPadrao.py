@@ -18,7 +18,7 @@ newF = pd.DataFrame()
 for file in csv_files:
 	f = pd.read_csv(file)
 	df2 = pd.DataFrame({
-	"Tamanho de pacote" : [int(f["Tamanho de pacote"].mean())],
+	"Tamanho do pacote" : [int(f["Tamanho de pacote"].mean())],
 	"Desvio Padrão de Packet Loss" : [int(f["Packet Loss"].std())],
 	"Desvio Padrão de Loss Percentage(%)" : "0%",		#[f["Packet Loss"].mean()],
 	"Desvio Padrão do Time Delta Mean(s)" : [f["Time Delta Mean(s)"].std()],
@@ -28,6 +28,6 @@ for file in csv_files:
 	})
 	newF = newF.append(df2)
 
-newF = newF.sort_values(by = ["Tamanho de pacote"])
+newF = newF.sort_values(by = ["Tamanho do pacote"])
 
 newF.to_csv(fileOut, index=False)
