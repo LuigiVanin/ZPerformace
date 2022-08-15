@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import glob
+import os
+from ..core.utils import dataCleaner
 
 def plot_throughput_data(dest_file: str, style: str="hist"):
     props = {
@@ -110,6 +112,10 @@ def plot_packet_loss_data(dest_file: str, style: str="line"):
 
 
 def generateData(src_file: str, dest_file: str):
+
+	if src_file is None : src_file = "./data/"
+	if dest_file is None : dest_file = "./graphs/"	
+	
 	fileOutDP = "desvioPadrao.csv"
 	fileOutM = "media.csv"
 	csv_files = glob.glob(src_file + "/*.csv")
@@ -122,7 +128,7 @@ def generateData(src_file: str, dest_file: str):
 		dppd = pd.DataFrame({
 		"Tamanho do pacote" : [int(f["Tamanho de pacote"].mean())],
 		"Desvio Padrão de Packet Loss" : [int(f["Packet Loss"].std())],
-		"Desvio Padrão de Loss Percentage(%)" : "0%",		#[f["Packet Loss"].mean()],
+		"Desvio Padrão de Loss Percentage(%)" : [ float(dataCleaner(f["Loss Percentage(%)"]).std()) ],
 		"Desvio Padrão do Time Delta Mean(s)" : [f["Time Delta Mean(s)"].std()],
 		"Desvio Padrão do Total Time(s)" : [f["Total Time(s)"].std()],
 		"Desvio Padrão de Total Bytes(B)" : [int(f["Total Bytes(B)"].std())],
@@ -131,7 +137,7 @@ def generateData(src_file: str, dest_file: str):
 		mpd = pd.DataFrame({
 		"Tamanho do pacote" : [int(f["Tamanho de pacote"].mean())],
 		"Média de Packet Loss" : [int(f["Packet Loss"].mean())],
-		"Média de Loss Percentage(%)" : "0%",		#[f["Packet Loss"].mean()],
+		"Média de Loss Percentage(%)" : [ float((f["Loss Percentage(%)"]).mean()) ],
 		"Média do Time Delta Mean(s)" : [f["Time Delta Mean(s)"].mean()],
 		"Média do Total Time(s)" : [f["Total Time(s)"].mean()],
 		"Média de Total Bytes(B)" : [int(f["Total Bytes(B)"].mean())],
@@ -145,6 +151,48 @@ def generateData(src_file: str, dest_file: str):
 
 	mf.to_csv(dest_file+fileOutM, index=False)
 	dpf.to_csv(dest_file+fileOutDP, index=False)
+
+
+def menuPlot(src_file: str):
+
+	if src_file is None : src_file = "./graphs/media.csv"
+
+	try:
+		f = pd.read_csv(src_file)
+	except:
+		print(src_file)
+		print("Arquivo não encontrada ou com erro! Verifique o arquivo e tente novamente!")
+		return 0
+
+	listaDeColunas = [i for i in f]
+
+	x = 0
+	y = 0
+
+	os.system('clear')
+
+	if len(listaDeColunas) != 0:
+		cont = 1
+		print("Menu plot escolha X e Y:")
+		for i in f:
+			print("({}). {}".format(cont, i))
+			cont += 1
+		x = int(input("Escolha o valor de X: "))
+
+		cont = 1
+		for i in f:
+			print("({}). {}".format(cont, i))
+			cont += 1
+		y = int(input("Escolha o valor de Y: "))
+		
+		f.plot(x = listaDeColunas[x-1], y = listaDeColunas[y-1], kind="line")
+		#print(listaDeColunas[x])
+		plt.grid()
+		plt.show()
+	else:
+		print("Nenhuma coluna encontrada! Verifique o arquivo e tente novamente!")
+		return 0
+	return 0
 
 
 

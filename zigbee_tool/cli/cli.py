@@ -2,9 +2,10 @@ from typer import Typer, Argument, echo
 from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice
 from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
-from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data, generateData
+from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data, generateData, menuPlot
 from ..core.features import checkAllDevices, returnDevice
 from typing import Optional
+import time
 
 import os
 import io
@@ -22,7 +23,6 @@ def checkDevices(
 	Verifica se existe algum dispositivo conectado e retorna sua porta e nó
 	'''
 	checkAllDevices()
-	#print(returnDevice("dev", 1))
 
 @cli.command()
 def broadcast(
@@ -69,7 +69,7 @@ def sendData(
 		echo(message="O dispositivo encontrado foi:\n- MAC: {}\n- Node ID: {}".format(hex_to_string(remote.get_pan_id()).replace(" ", ""),
 		remote.get_node_id()))
 		
-		if data.find(".png") != -1 or data.find(".jpeg") != -1:
+		if data.find(".png") != -1 or data.find(".jpeg") != -1 or data.find(".jpg") != -1:
 			#print("oi")
 			device.send_data(remote, "image")
 			with open(data, "rb") as image:
@@ -82,6 +82,7 @@ def sendData(
 					device.send_data(remote, pacote)
 					#print(pacote)
 					pacote = ""
+					time.sleep(0.5) #pq?
 				pacote += str(i) + "/"
 			device.send_data(remote,data=pacote)
 		else:
@@ -116,17 +117,17 @@ def receiveData(
 			pacote = ""
 			fim = False
 			array = []
-			fin = bytearray(b'fim!!!')
+			finalizar = bytearray(b'fim!!!')
 			while not fim:
 				device_message = device.read_data()
 				if device_message != None:
-					if device_message.data != fin:
+					if device_message.data != finalizar:
 						array.append(device_message)
 						#pacote += device_message.data.decode()
 					else:
 						fim = True
 						#print(device_message.data == bytearray(b'fim!!!'))
-			
+
 			for i in array:
 				pacote += i.data.decode()
 			#print("oi")
@@ -137,7 +138,7 @@ def receiveData(
 			
 			for point in splittedPacket:
 				arrayImage.append(int(point))
-			
+
 			bytearrayImage = bytearray(arrayImage)
 			#print(bytearrayImage)
 			image = Image.open(io.BytesIO(bytearrayImage))
@@ -241,12 +242,23 @@ def plotPacketLoss(
 
 @cli.command()
 def dataGenerator(
-	src_file: Optional[str] = "./data/",
-	dest_file: Optional[str] = "./graphs/",
+	src_file: Optional[str],
+	dest_file: Optional[str],
 ) -> None:
 	'''
 	Gera os dados de média e desvio padrão de uma determinada pasta de arquivos csv e salva em outra pasta.
 	'''
 	generateData(src_file, dest_file)
+
+
+@cli.command()
+def menuPlotGenerator(
+	src_file: Optional[str],
+) -> None:
+	'''
+	Ferramenta auxiliar para geração de gráficos.
+	'''
+	menuPlot(src_file)
+
 
 

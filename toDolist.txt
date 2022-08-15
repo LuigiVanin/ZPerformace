@@ -3,3 +3,4 @@
 #consertar os erros de envio de pacotes
 #fragmentar a imagem em 84 bytes ou em 255*
 #plots
+#documentação (README.MD, vídeo)

@@ -1,6 +1,7 @@
 from typing import Any, Optional, Union, List, Tuple
 from time import time
 from secrets import choice
+import pandas as pd
 
 number = Union[int, float]
 
@@ -62,7 +63,7 @@ def file_name_conc(file_dest, i):
 	part  = "_" + i[0] + "_" + i[1] + "_" + i[2] + ".csv"
 	dest_file = path + final_no_dot + part
 	return dest_file
-	
+
 def path_name_conc(file_dest):
 	mensage = file_dest.split("/")
 	tam = len(mensage)
@@ -70,7 +71,15 @@ def path_name_conc(file_dest):
 	path = "/".join(mensage) + "/"
 	return path
 
+def dataCleaner(pandas):
+	cont = 0
+	pandinha = pandas.loc[:]
 
+	for i in pandas:
+		pandinha[cont] = float( pandinha[cont].split("%")[0] )
+		cont += 1
+
+	return pandinha
 
 
 

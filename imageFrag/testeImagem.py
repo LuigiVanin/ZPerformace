@@ -47,6 +47,15 @@ ad = bytearray(ac)
 image = Image.open(io.BytesIO(ad))
 image.save(imageOutput)
 
+
+
+print(len(ad) - len(ac))
+
+for i, j in zip(range(len(ad)), range(len(ac))):
+	if i != j:
+		print("ERROR")
+		break
+
 #p
 
 """
