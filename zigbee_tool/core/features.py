@@ -4,6 +4,8 @@ from digi.xbee.devices import RemoteZigBeeDevice, ZigBeeDevice, XBeeMessage
 from os import listdir
 from os.path import isfile, join
 
+#Verifica os dispositivos conectados fisicamente e os salva em um arquivo para ser utilizados de forma seletiva.
+#Funcional apenas no linux.
 def checkAllDevices():
 	mypath = "/sys/class/tty/"
 	discovered = False
@@ -42,6 +44,7 @@ def checkAllDevices():
 	else:
 		print("Nenhum dispositivo conectado")
 
+#Retorna o dispositivo através de um número, somente utilizar após o checkdevices.
 def returnDevice(choice, info):
 	destination_file = "./zigbee_tool/core/dispositivosConectados/dispositivos.txt"
 	cont = 1

@@ -5,6 +5,7 @@ import glob
 import os
 from ..core.utils import dataCleaner
 
+#Gera os gráficos de throughput
 def plot_throughput_data(dest_file: str, style: str="hist"):
     props = {
         'facecolor':'blue', 
@@ -44,6 +45,7 @@ def plot_throughput_data(dest_file: str, style: str="hist"):
     plt.show()
     return
 
+#Gera os gráficos de delay
 def plot_delay_data(dest_file: str, style: str="line"):
     props = {
         'facecolor':'blue', 
@@ -76,7 +78,8 @@ def plot_delay_data(dest_file: str, style: str="line"):
             verticalalignment='top', bbox=props)
     plt.grid()
     plt.show()
-    
+
+#Gera os gráficos de packet loss
 def plot_packet_loss_data(dest_file: str, style: str="line"):
     props = {
         'facecolor':'blue', 
@@ -110,7 +113,7 @@ def plot_packet_loss_data(dest_file: str, style: str="line"):
     plt.grid()
     plt.show()
 
-
+#Gera os dados de média e desvio padrão na forma de arquivo csv e os armazena na pasta escolhida
 def generateData(src_file: str, dest_file: str):
 
 	if src_file is None : src_file = "./data/"
@@ -152,10 +155,23 @@ def generateData(src_file: str, dest_file: str):
 	mf.to_csv(dest_file+fileOutM, index=False)
 	dpf.to_csv(dest_file+fileOutDP, index=False)
 
+#Menu interativo para plotagem de gráficos de um arquivo escolhido
+def menuPlot(src_file: str, opt: str):
+	printAll = False
 
-def menuPlot(src_file: str):
+	if src_file is None and opt is None :
+		src_file = "./graphs/media.csv"
 
-	if src_file is None : src_file = "./graphs/media.csv"
+	elif src_file == "all" :
+		src_file = "./graphs/media.csv"
+		printAll = True
+	
+	elif opt == "all" :
+		printAll = True
+	
+	elif opt != "all" and opt is not None :
+		print("Opção não encontrada utilize o comando all")
+		return 0 
 
 	try:
 		f = pd.read_csv(src_file)
@@ -168,35 +184,119 @@ def menuPlot(src_file: str):
 
 	x = 0
 	y = 0
+	z = 0
 
-	os.system('clear')
+	#_, ax = plt.subplots()
 
-	if len(listaDeColunas) != 0:
-		cont = 1
-		print("Menu plot escolha X e Y:")
+	if printAll:
 		for i in f:
-			print("({}). {}".format(cont, i))
-			cont += 1
-		x = int(input("Escolha o valor de X: "))
-
-		cont = 1
-		for i in f:
-			print("({}). {}".format(cont, i))
-			cont += 1
-		y = int(input("Escolha o valor de Y: "))
-		
-		f.plot(x = listaDeColunas[x-1], y = listaDeColunas[y-1], kind="line")
-		#print(listaDeColunas[x])
+			if i == listaDeColunas[0]:
+				continue
+			else:
+				string = "Gráfico do(a) " + listaDeColunas[0] + " em relação a(o) " + i
+				f.plot(x = listaDeColunas[0], y = i, kind="line", title=string)
+			#print(i)
+		#f.plot(x = listaDeColunas[0], y = listaDeColunas[6], kind="line", title=string)
 		plt.grid()
 		plt.show()
-	else:
-		print("Nenhuma coluna encontrada! Verifique o arquivo e tente novamente!")
 		return 0
+	else:
+		continuar = True
+		graficos = []
+		
+		if len(listaDeColunas) == 0:
+			print("Nenhuma coluna encontrada! Verifique o arquivo e tente novamente!")
+			return 0
+		
+		while continuar:
+			os.system('clear')
+			if len(graficos) !=0 : print("Gráficos a ser(em) plotados: ", graficos)
+			
+			cont = 1
+			print("Menu plot escolha X e Y:")
+			for i in f:
+				print("({}). {}".format(cont, i))
+				cont += 1
+			x = int(input("Escolha o valor de X: "))
+			cont = 1
+			
+			for i in f:
+				print("({}). {}".format(cont, i))
+				cont += 1
+			y = int(input("Escolha o valor de Y: "))
+	
+			print("1. histogram")
+			print("2. line")
+			print("3. violin")
+
+			z = int(input("Escolha o tipo de gráfico: "))
+
+			_, ax = plt.subplots()
+				
+			if z == 1:
+				#histograma
+				ax.hist(f[listaDeColunas[y-1]], bins = len(f[listaDeColunas[y-1]]))
+				#print(len(f[listaDeColunas[y-1]]))
+				plt.title("Histograma da incidência do throughput(Kpbs) das iterações")
+				#plt.xlabel(listaDeColunas[x-1]) 
+				#plt.ylabel(listaDeColunas[y-1])
+			elif z == 2:
+				#line
+				ax.plot(f[listaDeColunas[x-1]], f[listaDeColunas[y-1]])
+				string = "Gráfico do(a) " + listaDeColunas[x-1] + " em relação a(o) " + listaDeColunas[y-1]
+				plt.title(string)
+				plt.xlabel(listaDeColunas[x-1])
+				plt.ylabel(listaDeColunas[y-1])
+			elif z == 3:
+				#violin
+				ax.violinplot(f[listaDeColunas[x-1]])
+				plt.title("Gráfico Violino da incidência do throughput(Kpbs) das iterações")
+				plt.ylabel(listaDeColunas[x-1])
+				plt.xlabel(listaDeColunas[y-1])
+			string = listaDeColunas[x-1] + " x " +  listaDeColunas[y-1]
+			graficos.append(string)
+
+			choise = input("Continuar plotando? (s/y) or (n/...)")
+			if choise != 'y' and choise != 's':
+				continuar = False
+
+		plt.grid()
+		plt.show()
+			
 	return 0
 
 
+'''
+cont = 1
+print("Menu plot escolha X e Y:")
+for i in f:
+	print("({}). {}".format(cont, i))
+	cont += 1
+	x = int(input("Escolha o valor de X: "))
 
-
+	cont = 1
+for i in f:
+	print("({}). {}".format(cont, i))
+	cont += 1
+	y = int(input("Escolha o valor de Y: "))
+			
+print("1. line")
+print("2. histogram")
+print("3. histogram")
+			
+z = int(input("Escolha o tipo de gráfico: "))
+			
+if z == 1:
+	kinde = "line"
+elif z == 2:
+	kinde = "hist"
+elif z == 3:
+	kinde = "violin"
+			
+f.plot(x = listaDeColunas[x-1], y = listaDeColunas[y-1], kind=kinde)
+plt.grid()
+plt.show()
+'''
 
 
 

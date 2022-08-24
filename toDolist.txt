@@ -2,5 +2,7 @@
 #interface
 #consertar os erros de envio de pacotes
 #fragmentar a imagem em 84 bytes ou em 255*
-#plots
 #documentação (README.MD, vídeo)
+#multiplot e tipos(violino e histograma ajustes)
+#modificar para bytearray
+

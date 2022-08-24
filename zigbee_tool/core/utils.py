@@ -64,6 +64,7 @@ def file_name_conc(file_dest, i):
 	dest_file = path + final_no_dot + part
 	return dest_file
 
+#
 def path_name_conc(file_dest):
 	mensage = file_dest.split("/")
 	tam = len(mensage)
@@ -71,6 +72,7 @@ def path_name_conc(file_dest):
 	path = "/".join(mensage) + "/"
 	return path
 
+#Função utilizada para retirar o símbolo % da coluna 'packet loss %'
 def dataCleaner(pandas):
 	cont = 0
 	pandinha = pandas.loc[:]

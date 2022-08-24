@@ -1,3 +1,8 @@
+from typing import Any, Optional, Union, List, Tuple
+from time import time
+from secrets import choice
+import pandas as pd
+
 import os
 import io
 import PIL.Image as Image
@@ -34,23 +39,45 @@ for i, j in zip(b, c):
 		print("ERROR")
 		break
 """
+string = ""
+lista = []
+for i in range(84):
+	string += "o"
+	lista.append(i)
+bi1 = bytearray()
+bi = bytearray(lista)
 
-with open("imageOutput.jpeg", "rb") as image:
+print(sys.getsizeof(string))
+
+print(sys.getsizeof(bi1))
+print(sys.getsizeof(bi))
+
+print(bi1)
+
+with open("i1.png", "rb") as image:
 	b = bytearray(image.read())
 pacote = ""
 predictedPacket = ""
 array = []
+cont = 0
+
+print(str(hex(255)))
+print(int('00', base=16))
+#print( sys.getsizeof(b) )
 for i in b:
 	predictedPacket = pacote + str(i) + "/"
-	if sys.getsizeof(predictedPacket) > 84:
-		#device.send_data(remote, pacote)
-		###
+	if sys.getsizeof(predictedPacket) > 133:
+		#print(len(str(i)))
+		#print( sys.getsizeof(2) )
+		#if sys.getsizeof(pacote) > 84:
+		#	print(teste)
+		#break
 		array.append(pacote)
-		###
 		pacote = ""
-		#time.sleep(0.5) #pq?
+		cont += 1
 	pacote += str(i) + "/"
 array.append(pacote)
+print(cont)
 #imageOutput = "imageFrag/imageOutput.png"
 pacote = ""
 #fim = False
@@ -83,7 +110,7 @@ for point in splittedPacket:
 bytearrayImage = bytearray(arrayImage)
 #print(bytearrayImage)
 image = Image.open(io.BytesIO(bytearrayImage))
-image.save("newImageOutput.jpeg")
+image.save("newImageOutput.png")
 			
 			
 
