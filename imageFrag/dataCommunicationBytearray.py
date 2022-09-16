@@ -28,22 +28,16 @@ def sender(
 		with open(data, "rb") as image:
 			b = bytearray(image.read())
 		pacote = ""
-		for i in b:
-			if len(pacote) > 82:
-				device.send_data(remote, pacote)
-				pacote = ""
-			if i == 0:
-				pacote += 'o'
-			elif i == 255:
-				pacote += 't'
-			elif i < 16:
-				pacote = pacote + '0' + str(hex(i))[2]
-			else:
-				pacote = pacote + str(hex(i))[2] + str(hex(i))[3]
-		device.send_data(remote,data=pacote)
+		cont = 84
+		while cont < len(b):
+			#tempo = 
+			device.send_data(remote, data = b[cont-84 : cont])
+			cont += 84
+			
+		device.send_data(remote, data = b[cont-84 : ])
 	else:
 		device.send_data(remote, data=data)
-	device.send_data_async(remote, "fim!!!")
+	#device.send_data_async(remote, "fim!!!")
 	print("Data sended!!!")
 
 _packets = []
@@ -52,15 +46,14 @@ _depois = 0
 
 def __receive_callback(message: XBeeMessage):
 	global _packets , _antes, _depois
-	msg: str = message.data.decode()
+	msg: str = message.data
 	
 	if _antes == -1:
 		_antes = time.time()
-	
-	if msg == ("fim!!!"):
+	if len(msg) < 84:	
+		#newMsg = message.data.decode()
 		_depois = time.time()
 		print("\n---FIM DO PROGRAMA---\nPress Enter For Results")
-		return
 	
 	_packets.append(msg)
 
@@ -75,37 +68,15 @@ def receiver(
 	#time.sleep(25)
 
 	imageOutput = "imageFrag/imageOutput.png"
-	splittedPacket = []
+	p = bytearray()
 	for i in _packets:
-		semi = ''
 		for j in i:
-			if len(semi) == 2:
-				splittedPacket.append(semi)
-				semi = ''
-			if j == 'o' or j == 't':
-				if j == 'o':
-					splittedPacket.append("0")
-				else:
-					splittedPacket.append("ff")
-			else:		
-				semi += j
-
-		if semi != '':
-			if j == 'o' or j == 't':
-				if j == 'o':
-					splittedPacket.append("0")
-				else:
-					splittedPacket.append("ff")
-			else:		
-					splittedPacket.append(semi)
+			p.append(j)
 
 	arrayImage = []
 
-	for point in splittedPacket:
-		arrayImage.append(int(point, base=16))
-
-	bytearrayImage = bytearray(arrayImage)
-	image = Image.open(io.BytesIO(bytearrayImage))
+	#bytearrayImage = bytearray(arrayImage)
+	image = Image.open(io.BytesIO(p))
 	image.save(imageOutput)
 
 	height = os.stat(imageOutput).st_size
@@ -113,13 +84,16 @@ def receiver(
 	newNow = (_depois - _antes)
 
 	df2 = pd.DataFrame({
-	"Tamanho da imagem (KB)" : [height],
+	"Tamanho real da imagem (KB)" : [height],
+	"Tamanho máximo da trasferência de dados (KB)" : [len(_packets) * 84],
+	"Quantidade de pacotes enviados" : [len(_packets)],
 	"Tempo total de recebimento (s)" : [newNow],
 	"Throughput Bytes (KBps)" : [height/newNow],
-	"Throughput bits (Kbps)" : [8*(height/newNow)]
+	"Média de tempo por pacote" : [newNow/len(_packets)]
+	#"Throughput bits (Kbps)" : [8*(height/newNow)]
 	})
 	df2.to_csv("imageFrag/data.csv",  mode='a', index=False, header=False)
 
 	#else:
 	#	print("A mensagem eviada foi: ", _packets[0])
-
+	#print(newNow)

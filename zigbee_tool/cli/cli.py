@@ -4,7 +4,8 @@ from digi.xbee.util.utils import hex_to_string
 from ..core.tests.throughput import throughput_receiver, throughput_sender
 from ..core.plot import plot_throughput_data, plot_delay_data, plot_packet_loss_data, generateData, menuPlot
 from ..core.features import checkAllDevices, returnDevice
-from imageFrag.dataCommunication import sender, receiver
+#from imageFrag.dataCommunication import sender, receiver
+from imageFrag.dataCommunicationBytearray import sender, receiver
 from typing import Optional
 import time
 
