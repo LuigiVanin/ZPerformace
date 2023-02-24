@@ -125,8 +125,8 @@ def performaceSender(
 
 @cli.command()
 def performaceReceiver(
-    port: str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido"),
-    dest_file: Optional[str] = "./data/data.csv" #Argument(..., help="Caminho para o arquivo csv em que os resultados serão armazenados")
+    port: str = Argument(..., help="A porta se refere a entrada física a qual o dispositivo está inserido")#,
+    #dest_file: Optional[str] = "./data/data.csv" #Argument(..., help="Caminho para o arquivo csv em que os resultados serão armazenados")
 ) -> None:
     '''
     Prepara um dispositivo para ser o receptor de um teste de performace(throughput, delay e perca de pacotes). Assim que ocorrer o fim do teste os dados coletados podem ser armazenados.
@@ -140,7 +140,8 @@ def performaceReceiver(
     local = ZigBeeDevice(port, baud_rate=115200)
     try:
         local.open()
-        throughput_receiver(local, dest_file)
+        #throughput_receiver(local, dest_file)
+        throughput_receiver(local)
     finally:
         if local is not None and local.is_open():
             local.close()

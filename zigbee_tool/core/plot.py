@@ -116,7 +116,7 @@ def plot_packet_loss_data(dest_file: str, style: str="line"):
 #Gera os dados de média e desvio padrão na forma de arquivo csv e os armazena na pasta escolhida
 def generateData(src_file: str, dest_file: str):
 
-	if src_file is None : src_file = "./data/"
+	if src_file is None : src_file = "./dataReal/"
 	if dest_file is None : dest_file = "./graphs/"	
 	
 	fileOutDP = "desvioPadrao.csv"

@@ -34,7 +34,8 @@ def throughput_sender(
 		local.send_data(remote, "START_{}".format(rep_amount))
 
 		for i in range(rep_amount):
-			local.send_data_async(remote, "begin_{}".format(i + 1))
+			#local.send_data_async(remote, "begin_{}".format(i + 1))
+			local.send_data(remote, "begin_{}".format(i + 1))
 			for _ in range(pack_amount):
 				local.send_data(remote, "{}-{:.7f}".format(payload, time()))
 			local.send_data(remote, "end_")
@@ -61,10 +62,11 @@ def __receive_callback(message: XBeeMessage):
     msg: str = message.data.decode()
     idx = msg.find("_")
     
+    #RECEBE AS CONFIGURAÇÕES INICIAIS
     if msg.find("config") != -1:
     	dados = msg.split("/")
     	_pack_amount = int(dados[2])
-    	_bit_value = 0
+    	_bit_value = int(dados[1])
     	_pack_count = 0
     	_configs_.append(dados[1:])
     
@@ -116,7 +118,7 @@ def __receive_callback(message: XBeeMessage):
 
 def throughput_receiver(
     local:ZigBeeDevice, 
-    file_dest: str = "./data/data.csv"
+    file_dest: str = "./data/data.csv" #modifique aqui para escolher o local de destino do arquivo com as saídas!
 ):
 	global _pack_count, _rep_amount, _rep_count, _delta_times, _time_total
 	global _configs_
